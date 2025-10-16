@@ -2,15 +2,15 @@
 
 Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orquestrados via Docker Compose, com os seguintes componentes: 
 
-🐘 PostgreSQL — Banco de dados relacional 
-🧠 Zookeeper — Coordenação e registro de serviços para o Kafka 
-🔄 Kafka Broker — Sistema de mensageria distribuída 
-💳 Conta Service — Microserviço principal para operações de conta 
+🐘 PostgreSQL — Banco de dados relacional  
+🧠 Zookeeper — Coordenação e registro de serviços para o Kafka  
+🔄 Kafka Broker — Sistema de mensageria distribuída   
+💳 Conta Service — Microserviço principal para operações de conta  
 📬 Kafka Service — Microserviço para consumo e publicação de mensagens Kafka
 
 ---
 
-## 🔄 Fluxo de Mensagens Kafka — Comunicação entre os Microserviços
+### 🔄 Fluxo de Mensagens Kafka — Comunicação entre os Microserviços
 
 A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável por garantir comunicação assíncrona e desacoplada entre os microserviços.
 ```text
@@ -42,12 +42,6 @@ A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável 
 
 ## 🟢 Início: Passo a passo para subir localmente com Docker
 
-Todos os serviços são definidos no arquivo:
-
-```bash
-api-funcoes-teste-spring/infra/docker-compose.yml
-```
-
 ---
 
 ### 🧼 1. Limpeza Completa do Ambiente Docker
@@ -74,7 +68,7 @@ Certifique-se de que as seguintes portas **não estão em uso** no seu sistema:
 |---------|-------|-----------|
 | PostgreSQL | 5432 | Banco de dados |
 | Zookeeper | 2181 | Coordenação Kafka |
-| Kafka Broker | 9092 / 29092 | Comunicação Kafka |
+| Kafka Broker | 29092 | Comunicação Kafka |
 | Conta Service | 8081 | API REST |
 | Kafka Service | 8082 | API REST |
 
@@ -163,7 +157,17 @@ docker logs -f kafka-service
 
 ---
 
-### 🧩 7. Endpoints para Teste no Insomnia
+### 🧪 7. Teste Completo (Smoke Test)
+Após subir o ambiente, rode os health checks:
+```bash
+curl -s http://localhost:8081/actuator/health
+curl -s http://localhost:8082/actuator/health
+```
+Ambos devem retornar `"status": "UP"`
+
+---
+
+### 🧩 8. Endpoints para Teste no Insomnia
 📘 **Conta Service (porta 8081)**
 
 **Base URL:**
@@ -252,18 +256,6 @@ http://localhost:8082
 
 ---
 
-### 🧹 8. Encerrando o Ambiente
-Para **parar e remover tudo** (containers, redes e volumes):
-```bash
-docker compose down -v --remove-orphans
-```
-Se quiser limpar completamente o cache e imagens:
-```bash
-docker system prune -af
-```
-
----
-
 ### 🧠 9. Dicas de Troubleshooting
 - Caso um serviço fique em `unhealthy`, use:
 ```bash
@@ -284,13 +276,15 @@ docker compose build --no-cache
 
 ---
 
-### 🧪 10. Teste Completo (Smoke Test)
-Após subir o ambiente, rode os health checks:
+### 🧹 10. Encerrando o Ambiente
+Para **parar e remover tudo** (containers, redes e volumes):
 ```bash
-curl -s http://localhost:8081/actuator/health
-curl -s http://localhost:8082/actuator/health
+docker compose down -v --remove-orphans
 ```
-Ambos devem retornar `"status": "UP"`
+Se quiser limpar completamente o cache e imagens:
+```bash
+docker system prune -af
+```
 
 ---
 
