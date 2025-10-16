@@ -10,23 +10,33 @@ Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orq
 
 ---
 
-## 🧠 Visão Geral da Arquitetura de Microserviços
+## 🔄 Fluxo de Mensagens Kafka — Comunicação entre os Microserviços
 
-A arquitetura da aplicação é composta pelos seguintes serviços:
-
+A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável por garantir comunicação assíncrona e desacoplada entre os microserviços.
 ```text
-+--------------------+         +---------------------+         +----------------------+
-|   Angular Frontend | <-----> |   Spring Boot API   | <-----> |   PostgreSQL Banco   |
-+--------------------+         +---------------------+         +----------------------+
-         ↑
-         │
-         └──> Comunicação via HTTP (porta 4200 → 8080)
++--------------------+        +--------------------+        +--------------------+
+|                    |        |                    |        |                    |
+|   Conta Service    | -----> |   Kafka Broker     | -----> |   Kafka Service    |
+|  (Produz eventos)  |        | (Gerencia tópicos) |        | (Consome eventos)  |
+|                    |        |                    |        |                    |
++--------------------+        +--------------------+        +--------------------+
+          |                              |                              |
+          | 1️⃣ Envia evento (Producer)   |                              |
+          |------------------------------>|                              |
+          |                              | 2️⃣ Armazena no tópico        |
+          |                              |------------------------------>|
+          |                              |                              | 3️⃣ Consome evento (Listener)
+          |                              |                              |
 
 ```
-- **💻 Frontend (Angular):** Interface web do sistema, acessível via navegador.
-- **⚙️ Backend (Spring Boot):** API responsável pelas regras de negócio e persistência.
-- **🐘 Banco de Dados (PostgreSQL):** Armazena todas as entidades da aplicação.
-- **🐳 Docker Compose:** Orquestração dos containers.
+
+### 🔄 Componentes do Fluxo
+
+| Componente  | Função                  | Descrição                           |
+|---------|---------------------------|-------------------------------------|
+| Conta Service     | Producer            | Publica eventos no tópico Kafka `conta-events` sempre que ocorre uma ação (ex: criação ou atualização de conta). |
+| Kafka Broker    | Mensageiro             | Garante entrega e persistência da mensagem no tópico.                |
+| Kafka Service  | Consumer | Fica escutando o tópico `conta-events` e processa mensagens recebidas.                      |
 
 ---
 
@@ -113,9 +123,9 @@ docker compose up -d
 ```
 
 Esse comando vai:
-1. Criar a **rede** microservices-net
+1. Criar a **rede** `microservices-net`
 2. Subir o **PostgreSQL**, **Zookeeper** e **Kafka Broker**
-3. Construir as imagens do **conta-service** e **kafka-service**
+3. Construir as imagens do `conta-service` e `kafka-service`
 4. Iniciar todos os containers em segundo plano
 ---
 
@@ -161,7 +171,7 @@ docker logs -f kafka-service
 http://localhost:8081
 ```
 🟢 **1. Criar Conta**
-- **POST** /api/contas
+- **POST** `/api/contas`
 - **Body (JSON):**
 ```json
 {
@@ -175,7 +185,7 @@ http://localhost:8081
 Solicitação de abertura de conta processada!
 ```
 🟢 **2. Listar Contas**
-- **GET** /api/contas
+- **GET** `/api/contas`
 
 ✅ **Resposta:**
 ```json
@@ -200,7 +210,7 @@ Solicitação de abertura de conta processada!
 http://localhost:8082
 ```
 🟢 **1. Health Check:**
-- **GET** /actuator/health
+- **GET** `/actuator/health`
 
 ✅ **Resposta:**
 ```json
@@ -210,7 +220,7 @@ http://localhost:8082
 ```
 
 🟢 **2. Enviar Mensagem Kafka:**
-- **POST** /api/kafka/publish
+- **POST** `/api/kafka/publish`
 - **Body:**
 ```json
 {
@@ -227,7 +237,7 @@ http://localhost:8082
 ```
 
 🟢 **3. Listar Mensagens (exemplo fictício de consumo)**
-- **GET** /api/kafka/messages
+- **GET** `/api/kafka/messages`
 
 ✅ **Resposta:**
 ```json
@@ -255,7 +265,7 @@ docker system prune -af
 ---
 
 ### 🧠 9. Dicas de Troubleshooting
-- Caso um serviço fique em unhealthy, use:
+- Caso um serviço fique em `unhealthy`, use:
 ```bash
 docker inspect <nome_container> | grep -A 10 "Health"
 ```
@@ -280,6 +290,7 @@ Após subir o ambiente, rode os health checks:
 curl -s http://localhost:8081/actuator/health
 curl -s http://localhost:8082/actuator/health
 ```
+Ambos devem retornar `"status": "UP"`
 
 ---
 
