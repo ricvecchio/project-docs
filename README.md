@@ -1,13 +1,13 @@
 # 📚 Repositório de Documentação Genérica
 
-Este repositório centraliza a documentação de múltiplos projetos da organização, facilitando acesso a guias, fluxos, diagramas e endpoints de cada serviço.
+Este repositório centraliza a documentação de múltiplos projetos, facilitando acesso a guias, fluxos, diagramas e endpoints de cada serviço.
 
 ---
 
 ## 🧩 Projetos Documentados
 
-- [Conta + Kafka Service](https://github.com/ricvecchio/api-funcoes-teste-spring/blob/main/README.md)  
-  Documentação completa do **Conta Service** e **Kafka Service**, incluindo setup com Docker, endpoints e fluxo detalhado de mensagens Kafka.
+- [Deploy Local com Docker (Conta Service + Kafka Service)](https://github.com/ricvecchio/project-docs/blob/main/conta-kafka-service/README.md)  
+  Documentação completa com o passo a passo para subir localmente o **Conta Service** e **Kafka Service**, incluindo endpoints e fluxo detalhado de mensagens Kafka.
 
 - [Frontend Angular - CRUD - Sistema para Gestão de Clientes, Pedidos e Usuários](https://github.com/ricvecchio/transp-crud-angular/blob/main/README.md)  
   Documentação da aplicação web desenvolvida em Angular 14 para o gerenciamento completo de clientes, pedidos e usuários.
@@ -17,13 +17,7 @@ Este repositório centraliza a documentação de múltiplos projetos da organiza
 
 - [Comandos Extras](./README.md)  
   Lista de **scripts e comandos úteis** para desenvolvimento, manutenção e deploy.  
-  Inclui instruções para uso de Docker, limpeza de containers, imagens, volumes e automações.
 
 ---
-
-## 🛠️ Como Contribuir
-
-Se você deseja adicionar ou atualizar documentações de novos projetos, siga este fluxo:
-
-1. Crie uma nova pasta no repositório com o nome do projeto:  
+ 
 
