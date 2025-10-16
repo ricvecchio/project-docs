@@ -25,9 +25,6 @@ docker-compose down
 # Listar todos os containers (ativos e inativos)
 docker ps -a
 
-# Recompilar o frontend ou backend (Rebuildar containers após mudanças no código)
-docker compose build
-
 # Limpar volumes (apagar dados do banco)
 docker volume rm project-root_postgres_data
 
@@ -48,6 +45,14 @@ docker logs conta-service | grep ERROR
 
 # Filtrar logs por exceções 
 docker logs conta-service | grep Exception
+
+# Para garantir que tudo seja reconstruído do zero
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+
+# Recompilar o frontend ou backend (Rebuildar containers após mudanças no código)
+docker compose up -d --build
 ```
 
 
@@ -124,3 +129,11 @@ sudo lsof -i :5432
 ```
 
 Se não aparecer nada, está tudo limpo ✅
+
+### 🔥 Dar permissão de execução aos scripts
+
+Este comando altera as permissões dos arquivos `.sh` dentro da pasta `bin/`, tornando-os **executáveis**.
+```bash
+chmod +x bin/*.sh
+```
+Após sua execução, será possível rodar os scripts diretamente no terminal utilizando `./nome-do-script.sh`.
