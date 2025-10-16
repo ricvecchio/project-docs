@@ -4,7 +4,7 @@ Este repositório centraliza a documentação de múltiplos projetos, facilitand
 
 ---
 
-## 🧩 Projetos Documentados
+## 🧩 Documentações
 
 - [Deploy Local com Docker (Conta Service + Kafka Service)](https://github.com/ricvecchio/project-docs/blob/main/conta-kafka-service/README.md)  
   Documentação completa com o passo a passo para subir localmente o **Conta Service** e **Kafka Service**, incluindo endpoints e fluxo detalhado de mensagens Kafka.
@@ -15,7 +15,7 @@ Este repositório centraliza a documentação de múltiplos projetos, facilitand
 - [Backend Spring Boot - CRUD - Sistema para Gestão de Clientes, Pedidos e Usuários](https://github.com/ricvecchio/transp-api-crud-spring/blob/main/README.md)  
   Documentação da API REST desenvolvida em Java 21 com Spring Boot 3.2.2, responsável pela gestão de clientes, pedidos e usuários.
 
-- [Comandos Extras](./README.md)  
+- [Comandos Extras](https://github.com/ricvecchio/project-docs/blob/main/comandos-extras/README.md)  
   Lista de **scripts e comandos úteis** para desenvolvimento, manutenção e deploy.  
 
 ---
