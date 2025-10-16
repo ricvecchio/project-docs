@@ -33,6 +33,21 @@ docker volume rm project-root_postgres_data
 
 # Acessar o banco de dados
 docker exec -it postgres-db psql -U admin -d minha_base
+
+# Ver logs de todos os serviços
+docker-compose logs -f
+
+# Logs apenas do serviço conta-service:
+docker logs conta-service
+
+# Seguir logs em tempo real
+docker logs -f conta-service
+
+# Filtrar logs por erros
+docker logs conta-service | grep ERROR
+
+# Filtrar logs por exceções 
+docker logs conta-service | grep Exception
 ```
 
 
