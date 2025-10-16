@@ -207,6 +207,45 @@ Solicitação de abertura de conta processada!
 ]
 ```
 
+🟢 **3. Listar Endpoints**
+- **GET** `/api/endpoints`
+
+✅ **Resposta:**
+```json
+[
+  {
+    "path": "/",
+    "methods": "GET",
+    "controller": "HealthController",
+    "methodName": "home"
+  },
+  {
+    "path": "/api/contas",
+    "methods": "GET",
+    "controller": "ContaController",
+    "methodName": "listarContas"
+  },
+  {
+    "path": "/api/contas/abrir",
+    "methods": "POST",
+    "controller": "ContaController",
+    "methodName": "abrirConta"
+  },
+  {
+    "path": "/api/endpoints",
+    "methods": "GET",
+    "controller": "EndpointController",
+    "methodName": "listarEndpoints"
+  },
+  {
+    "path": "/health",
+    "methods": "GET",
+    "controller": "HealthController",
+    "methodName": "health"
+  }
+]
+```
+
 📗 **Kafka Service (porta 8082)**
 
 **Base URL:**
