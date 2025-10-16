@@ -30,6 +30,8 @@ A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável 
 
 ```
 
+![Fluxo](images/spring-kafka-container.png)
+
 ### 🔄 Componentes do Fluxo
 
 | Componente  | Função                  | Descrição                           |
