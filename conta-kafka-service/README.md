@@ -1,6 +1,7 @@
 # 🚀 Guia Oficial de Deploy Local com Docker
 
-Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orquestrados via Docker Compose, com os seguintes componentes: 
+Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orquestrados via Docker Compose, com os seguintes componentes:
+![Diagrama](https://raw.githubusercontent.com/ricvecchio/project-docs/main/images/spring-kafka-container.png)
 
 🐘 PostgreSQL — Banco de dados relacional  
 🧠 Zookeeper — Coordenação e registro de serviços para o Kafka  
@@ -29,9 +30,6 @@ A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável 
           |                              |                              |
 
 ```
-
-![Diagrama](https://raw.githubusercontent.com/ricvecchio/project-docs/main/images/spring-kafka-container.png)
-
 
 ### 🔄 Componentes do Fluxo
 
