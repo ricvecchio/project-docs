@@ -114,7 +114,7 @@ cd ~/Projetos/api-funcoes-teste-spring/infra
 Com o **Docker Desktop** aberto e em execução, execute:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env up -d --build
 ```
 
 Esse comando vai:
