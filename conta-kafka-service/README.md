@@ -46,45 +46,42 @@ A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável 
 
 ```text
 api-funcoes-teste-spring/
-├── .github/workflows/
-│   ├── deploy-all.yml
-│   └── deploy-test.yml
+├── .github/workflows/deploy(vps/test))
 ├── .mvn/wrapper/maven-wrapper.properties
 ├── infra/
-│   ├── .env
-│   ├── .env.prod
+│   ├── .env(dev/prod)
 │   └── docker-compose.yml
 ├── pom.xml
 └── README.md
 
 conta-service/
 ├── .github/workflows/deploy-conta.yml
-├── .mvn/wrapper/
-├── src/main/java/com/funcoes/
-│   ├── config/
-│   ├── service/
-│   ├── controller/
-│   ├── repository/
-│   ├── model/
-│   └── ContaApplication.run
+├── .mvn/wrapper/maven-wrapper.jar
 ├── src/main/
-│   └── resources/application
+│   ├── java/com/funcoes/
+│   │   ├── config/
+│   │   ├── controller/
+│   │   ├── model/
+│   │   ├── repository/
+│   │   ├── service/
+│   │   └── ContaServiceApplication.java
+│   └── resources/application.properties
 ├── target/conta-service-1.0.0.jar
 ├── Dockerfile
 └── pom.xml
 
 kafka-service/
 ├── .github/workflows/deploy-kafka.yml
-├── .mvn/wrapper/
-├── src/main/java/com/funcoes/
-│   ├── config/
-│   ├── consumer/
-│   ├── controller/
-│   ├── model/
-│   ├── repository/
-│   └── KafkaApplication.run
+├── .mvn/wrapper/maven-wrapper.jar
 ├── src/main/
-│   └── resources/application
+│   ├── java/com/funcoes/
+│   │   ├── config/
+│   │   ├── consumer/
+│   │   ├── controller/
+│   │   ├── model/
+│   │   ├── repository/
+│   │   └── KafkaServiceApplication.java
+│   └── resources/application.properties
 ├── target/kafka-service-1.0.0.jar
 ├── Dockerfile
 └── pom.xml
@@ -208,15 +205,12 @@ Ambos devem retornar `"status": "UP"`
 ---
 
 ### 🧩 8. Endpoints para Teste no Insomnia
-📘 **Conta Service (porta 8081)**
+📘 **Conta Service**
 
-**Base URL:**
-```arduino
-http://localhost:8081
-```
-🟢 **1. Criar Conta**
-- **POST** `/api/contas`
-- **Body (JSON):**
+**Base URL:**  ``` http://localhost:8081 ``` 
+
+🟢 **1. Criar Conta** - POST `/api/contas/abrir`
+- **Body:** (JSON)
 ```json
 {
   "nomeCliente": "Ricardo Teste",
@@ -225,30 +219,15 @@ http://localhost:8081
 }
 ```
 ✅ **Resposta:**
-```text
-Solicitação de abertura de conta processada!
-```
-🟢 **2. Listar Contas**
-- **GET** `/api/contas`
-
-✅ **Resposta:**
 ```json
-[
-  {
-    "idConta": 1,
-    "tipo": "CORRENTE",
-    "status": "PENDENTE",
-    "cliente": {
-      "idCliente": 1,
-      "nome": "Ricardo Teste",
-      "cpf": "123.456.789-00"
-    }
-  }
-]
+{
+  "mensagem": "✅ Solicitação de abertura de conta processada!",
+  "status": "ACCEPTED",
+  "timestamp": "2025-10-20T14:12:08.304246174Z"
+}
 ```
 
-🟢 **3. Listar Endpoints**
-- **GET** `/api/endpoints`
+🟢 **2. Listar Endpoints** - GET `/api/endpoints`
 
 ✅ **Resposta:**
 ```json
@@ -258,12 +237,6 @@ Solicitação de abertura de conta processada!
     "methods": "GET",
     "controller": "HealthController",
     "methodName": "home"
-  },
-  {
-    "path": "/api/contas",
-    "methods": "GET",
-    "controller": "ContaController",
-    "methodName": "listarContas"
   },
   {
     "path": "/api/contas/abrir",
@@ -286,53 +259,86 @@ Solicitação de abertura de conta processada!
 ]
 ```
 
-📗 **Kafka Service (porta 8082)**
-
-**Base URL:**
-```arduino
-http://localhost:8082
-```
-🟢 **1. Health Check:**
-- **GET** `/actuator/health`
+🟢 **3. Actuator Health:** - GET `/actuator/health`
 
 ✅ **Resposta:**
 ```json
 {
-"status": "UP"
+  "status": "UP",
+  "groups": [
+    "liveness",
+    "readiness"
+  ]
 }
 ```
 
-🟢 **2. Enviar Mensagem Kafka:**
-- **POST** `/api/kafka/publish`
-- **Body:**
-```json
-{
-"topic": "conta-events",
-"mensagem": "Conta criada com sucesso!"
-}
-```
+🟢 **4. Health Check:** - GET `/health`
+
 ✅ **Resposta:**
 ```json
 {
-"status": "Mensagem publicada com sucesso",
-"topic": "conta-events"
+  "service": "conta-service",
+  "version": "1.0.0",
+  "status": "UP",
+  "timestamp": "2025-10-20T14:12:46.533994678"
 }
 ```
 
-🟢 **3. Listar Mensagens (exemplo fictício de consumo)**
-- **GET** `/api/kafka/messages`
+📘 **Kafka Service**
+
+**Base URL:**  ``` http://localhost:8082```
+
+🟢 **1. Listar Contas** - GET `/api/contas`
 
 ✅ **Resposta:**
 ```json
 [
   {
-"topic": "conta-events",
-"mensagem": "Conta criada com sucesso!",
-"timestamp": "2025-10-15T10:24:30Z"
+    "id": 1,
+    "tipo": "CORRENTE",
+    "status": "ATIVA",
+    "cliente": {
+      "id": 1,
+      "nome": "Ricardo Teste Post 1",
+      "cpf": "12345678901"
+    }
+  },
+  {
+    "id": 2,
+    "tipo": "CORRENTE",
+    "status": "ATIVA",
+    "cliente": {
+      "id": 1,
+      "nome": "Ricardo Teste Post 1",
+      "cpf": "12345678901"
+    }
   }
 ]
 ```
+🟢 **2. Actuator Health** - GET `/actuator/health`
 
+✅ **Resposta:**
+```json
+{
+  "status": "UP",
+  "groups": [
+    "liveness",
+    "readiness"
+  ]
+}
+```
+
+🟢 **3. Health Check:** - GET `/health`
+
+✅ **Resposta:**
+```json
+{
+  "service": "kafka-service",
+  "version": "1.0.0",
+  "status": "UP",
+  "timestamp": "2025-10-20T14:12:50.149249971"
+}
+```
 ---
 
 ### 🧠 9. Dicas de Troubleshooting
