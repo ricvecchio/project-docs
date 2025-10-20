@@ -95,10 +95,33 @@ A estrutura local é a seguinte:
 
 ```text
 api-funcoes-teste-spring/
+│
 ├── conta-service/
+│   ├── .github/workflows/deploy-conta.yml
+│   ├── .mvn/wrapper/maven-wrapper.jar
+│   ├── src/
+│   ├── target/app-conta.jar
+│   ├── Dockerfile
+│   └── pom.xml
+│
 ├── kafka-service/
+│   ├── .github/workflows/deploy-kafka.yml
+│   ├── .mvn/wrapper/maven-wrapper.jar
+│   ├── src/
+│   ├── target/app-kafka.jar
+│   ├── Dockerfile
+│   └── pom.xml
+│
+├── .github/workflows/
+│   └── deploy-all.yml
+│   └── deploy-test.yml
+├── .mvn/wrapper/
+│   └── maven-wrapper.properties
 ├── infra/
+│   └── .env
+│   └── .env.prod
 │   └── docker-compose.yml
+├── pom.xml
 └── README.md
 ```
 
