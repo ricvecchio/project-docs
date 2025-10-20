@@ -41,6 +41,42 @@ A arquitetura de mensageria do projeto é baseada no Apache Kafka, responsável 
 
 ---
 
+
+### 🧭 3. Estrutura do Projeto
+
+```text
+api-funcoes-teste-spring/
+│
+├── conta-service/
+│   ├── .github/workflows/deploy-conta.yml
+│   ├── .mvn/wrapper/maven-wrapper.jar
+│   ├── src/
+│   ├── target/app-conta.jar
+│   ├── Dockerfile
+│   └── pom.xml
+│
+├── kafka-service/
+│   ├── .github/workflows/deploy-kafka.yml
+│   ├── .mvn/wrapper/maven-wrapper.jar
+│   ├── src/
+│   ├── target/app-kafka.jar
+│   ├── Dockerfile
+│   └── pom.xml
+│
+├── .github/workflows/
+│   └── deploy-all.yml
+│   └── deploy-test.yml
+├── .mvn/wrapper/
+│   └── maven-wrapper.properties
+├── infra/
+│   └── .env
+│   └── .env.prod
+│   └── docker-compose.yml
+├── pom.xml
+└── README.md
+```
+
+
 ## 🟢 Início: Passo a passo para subir localmente com Docker
 
 ---
@@ -89,43 +125,9 @@ sudo kill -9 <PID>
 ```
 ---
 
-### 🧭 3. Navegação e Estrutura do Projeto
+### 🧭 3. Navegação local do projeto
 
-A estrutura local é a seguinte:
-
-```text
-api-funcoes-teste-spring/
-│
-├── conta-service/
-│   ├── .github/workflows/deploy-conta.yml
-│   ├── .mvn/wrapper/maven-wrapper.jar
-│   ├── src/
-│   ├── target/app-conta.jar
-│   ├── Dockerfile
-│   └── pom.xml
-│
-├── kafka-service/
-│   ├── .github/workflows/deploy-kafka.yml
-│   ├── .mvn/wrapper/maven-wrapper.jar
-│   ├── src/
-│   ├── target/app-kafka.jar
-│   ├── Dockerfile
-│   └── pom.xml
-│
-├── .github/workflows/
-│   └── deploy-all.yml
-│   └── deploy-test.yml
-├── .mvn/wrapper/
-│   └── maven-wrapper.properties
-├── infra/
-│   └── .env
-│   └── .env.prod
-│   └── docker-compose.yml
-├── pom.xml
-└── README.md
-```
-
-Acesse a pasta de infraestrutura no terminal:
+Acesse a pasta de infraestrutura local no terminal:
 
 ```bash
 cd ~/Projetos/api-funcoes-teste-spring/infra
