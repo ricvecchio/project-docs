@@ -138,7 +138,6 @@ git push -u origin main
 ---
 ## ⚙️ Comandos
 
----
 ### 💻 Verificar e encerrar quem esta ocupando uma porta. 
 - Exemplo porta: 5432
 ```bash
