@@ -57,10 +57,10 @@ A aplicação é composta por um **frontend em Angular 14** e um **backend em Ja
 - Docker Compose 🐳
 
 ### ☁️ DevOps / Infra
-- Render — hospedagem da aplicação frontend e backend (Free Tier)
-- VPS Hostinger — execução do JAR do backend em produção
-- PostgreSQL — banco gerenciado na nuvem
-- GitHub Actions (em desenvolvimento) — automação de build e deploy
+- **Render** — hospedagem da aplicação frontend e backend (Free Tier)
+- **VPS Hostinger** — execução do JAR do backend em produção
+- **PostgreSQL** — banco gerenciado na nuvem
+- **GitHub Actions** (em desenvolvimento) — automação de build e deploy
 
 ---
 
