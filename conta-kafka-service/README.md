@@ -141,7 +141,7 @@ sudo kill -9 <PID>
 Acesse a pasta de infraestrutura local no terminal:
 
 ```bash
-cd ~/Projetos/api-funcoes-teste-spring/infra
+cd ~/"Projetos/Projeto para Estudos (Frontend + Backend)/api-funcoes-teste-spring/infra"
 ```
 ---
 
