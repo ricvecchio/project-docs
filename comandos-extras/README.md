@@ -106,8 +106,6 @@ Isso vai mostrar todas as mensagens enviadas para o tópico teste.
 ---
 ## 🧩 Configuração do repositório Git
 
----
-
 ### 1️⃣ Criar ou usar um tópico (ex: “teste”)
 ```bash
 git init
