@@ -53,6 +53,9 @@ docker compose up -d
 
 # Recompilar o frontend ou backend (Rebuildar containers após mudanças no código)
 docker compose up -d --build
+
+# Listar os containers em execução no Docker
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
 
@@ -102,9 +105,9 @@ docker exec -it kafka-broker kafka-console-consumer \
 
 Isso vai mostrar todas as mensagens enviadas para o tópico teste.
 
-## 🔄 Comandos
+## ⚙️ Comandos
 
-### 🕵️‍♂️ Verificar quem esta ocupando uma porta. 
+### 💻 Verificar quem esta ocupando uma porta. 
 Exemplo porta: 5432
 ```bash
 sudo lsof -i :5432
@@ -115,22 +118,22 @@ COMMAND   PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
 postgres  1234  ricardodelvecchio  7u  IPv4  0x...      0t0  TCP *:5432 (LISTEN)
 ```
 
-### 🔪 Encerrar o processo que está travando a porta
+### 💻 Encerrar o processo que está travando a porta
 
 Depois de identificar o PID, você pode encerrar com:
 ```bash
 sudo kill -9 1234
 ```
-### 🧹 Confirmar que a porta foi liberada
+### 💻 Confirmar que a porta foi liberada
 
 Verifique novamente:
 ```bash
 sudo lsof -i :5432
 ```
 
-Se não aparecer nada, está tudo limpo ✅
+Se não aparecer nada, está tudo limpo
 
-### 🔥 Dar permissão de execução aos scripts
+### 💻 Dar permissão de execução aos scripts
 
 Este comando altera as permissões dos arquivos `.sh` dentro da pasta `bin/`, tornando-os **executáveis**.
 ```bash
@@ -140,32 +143,14 @@ Após sua execução, será possível rodar os scripts diretamente no terminal u
 
 ---
 
-## ▶️ Como testar: Frontend + Backend
+### 💻 TO-DO
+
 ---
-1.  **Backend**
-- `conta-service` rodando em `http://localhost:8081`
-- `kafka-service` rodando em `http://localhost:8082`
 
-2. **Frontend**
-```bash
-# Clone este repositório
-git clone https://github.com/ricvecchio/angular-java-frontend.git
+### 💻 TO-DO
 
-# Acesse a pasta do projeto
-cd angular-java-frontend
+---
 
-# Instale as dependências
-npm install
-
-# Execute a aplicação
-ng serve
-
-# Acesse no navegador
-http://localhost:4200
-
-```
-
-3. **Acesse**
-👉 http://localhost:4200
+### 💻 TO-DO
 
 ---

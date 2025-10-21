@@ -61,17 +61,6 @@ TO-DO
 
 ---
 
-## ⚙️ Como Executar Localmente
-
-### 🧩 Frontend — Painel Angular
-```bash
-git clone https://github.com/ricvecchio/painel-funcoes-teste-angular.git
-cd painel-funcoes-teste-angular
-npm install
-npm start
-```
----
-
 ## 🧩 Funcionalidades Principais
 
 ### Frontend
@@ -84,6 +73,33 @@ npm start
 - **Processamento Kafka:** consumo e persistência de mensagens no PostgreSQL
 - **Validação de CPF e nome**
 - **Monitoramento via endpoints** `/health`
+
+---
+
+## ▶️ Como testar: Frontend + Backend
+
+1.  **Backend**
+- `conta-service` rodando em `http://localhost:8081`
+- `kafka-service` rodando em `http://localhost:8082`
+
+2. **Frontend**
+
+- Clone este repositório
+```bash
+git clone https://github.com/ricvecchio/painel-funcoes-teste-angular.git
+```
+- Acesse a pasta do projeto
+```bash
+cd painel-funcoes-teste-angular
+```
+- Instalar e executar a aplicação
+```bash
+npm install
+npm start
+```
+
+3. **Acesse**
+   👉 http://localhost:4200
 
 ---
 
