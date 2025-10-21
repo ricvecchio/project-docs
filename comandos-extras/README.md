@@ -57,7 +57,7 @@ docker compose up -d --build
 # Listar os containers em execução no Docker
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
-
+---
 
 ## 🔄 Kafka Broker — Sistema de mensageria distribuída   
 
@@ -85,7 +85,6 @@ docker exec -it kafka-broker kafka-console-producer \
 --topic teste \
 --bootstrap-server localhost:9092
 ```
-
 Depois de rodar esse comando, digite qualquer mensagem, por exemplo:
 
 ```css
@@ -102,36 +101,67 @@ docker exec -it kafka-broker kafka-console-consumer \
 --from-beginning \
 --bootstrap-server localhost:9092
 ```
-
 Isso vai mostrar todas as mensagens enviadas para o tópico teste.
 
+---
+## 🧩 Configuração do repositório Git
+
+---
+
+### 1️⃣ Criar ou usar um tópico (ex: “teste”)
+```bash
+git init
+git branch -M main
+echo "node_modules" >> .gitignore
+git add .
+git commit -m "chore: rename project to painel-funcoes-teste-angular"
+```
+⚠️ Se o projeto já possuía Git, pule para o passo 3.
+
+### 2️⃣ Enviar mensagens para o tópico, cada linha digitada será enviada como uma mensagem separada.
+1. Acesse GitHub > [New Repository](https://github.com/new)
+2. Nome: `painel-funcoes-teste-angular`
+3. Escolha **público** ou **privado**
+4. **Não adicione README** (já temos commit local)
+5. Copie a URL do repositório, por exemplo:
+`git@github.com:ricvecchio/painel-funcoes-teste-angular.git`
+
+### 3️⃣ Conectar e enviar para o repositório remoto
+```bash
+git remote add origin git@github.com:<seu-usuario>/painel-funcoes-teste-angular.git
+git push -u origin main
+```
+🔁 Se já existir um remoto anterior:
+```bash
+git remote set-url origin git@github.com:<seu-usuario>/painel-funcoes-teste-angular.git
+git push -u origin main
+```
+
+---
 ## ⚙️ Comandos
 
-### 💻 Verificar quem esta ocupando uma porta. 
-Exemplo porta: 5432
+---
+### 💻 Verificar e encerrar quem esta ocupando uma porta. 
+- Exemplo porta: 5432
 ```bash
 sudo lsof -i :5432
 ```
-Esses comandos listam qual processo (PID e nome) está escutando na porta.
+- Esses comandos listam qual processo (PID e nome) está escutando na porta.
 ```graphql
 COMMAND   PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
 postgres  1234  ricardodelvecchio  7u  IPv4  0x...      0t0  TCP *:5432 (LISTEN)
 ```
-
-### 💻 Encerrar o processo que está travando a porta
-
-Depois de identificar o PID, você pode encerrar com:
+- Encerrar o processo que está travando a porta através do PID:
 ```bash
 sudo kill -9 1234
 ```
-### 💻 Confirmar que a porta foi liberada
-
-Verifique novamente:
+- Confirmar que a porta foi liberada
 ```bash
 sudo lsof -i :5432
 ```
+- Se não aparecer nada, está tudo limpo
 
-Se não aparecer nada, está tudo limpo
+---
 
 ### 💻 Dar permissão de execução aos scripts
 
@@ -143,14 +173,64 @@ Após sua execução, será possível rodar os scripts diretamente no terminal u
 
 ---
 
-### 💻 TO-DO
+### 💻 Ver arquivos modificados ou não rastreados
+```bash
+git status
+```
+
+---
+
+### 💻 Lista apenas os arquivos staged (prontos para commit)
+```bash
+git diff --name-only --cached
+```
+
+---
+
+### 💻 Listar arquivos modificados ainda não adicionados ao stage (não adicionados para commit)
+```bash
+git diff --name-only
+```
+
+---
+
+### 💻 Adiciona todos os arquivos modificados/novos e exibe quais serão incluídos no próximo commit
+```bash
+git add .
+git status
+```
+
+---
+### 💻 Commit adicionando um comentário pelo Git
+```bash
+git commit -m "Adiciona imagem minha-imagem.png na pasta images"
+```
+
+---
+### 💻 Envie as alterações para o seu repositório remoto no GitHub
+```bash
+git push origin main
+```
 
 ---
 
 ### 💻 TO-DO
+```bash
+
+```
 
 ---
 
 ### 💻 TO-DO
+```bash
+
+```
+
+---
+
+### 💻 TO-DO
+```bash
+
+```
 
 ---
