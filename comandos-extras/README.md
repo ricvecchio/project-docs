@@ -137,3 +137,35 @@ Este comando altera as permissões dos arquivos `.sh` dentro da pasta `bin/`, to
 chmod +x bin/*.sh
 ```
 Após sua execução, será possível rodar os scripts diretamente no terminal utilizando `./nome-do-script.sh`.
+
+---
+
+## ▶️ Como testar: Frontend + Backend
+---
+1.  **Backend**
+- `conta-service` rodando em `http://localhost:8081`
+- `kafka-service` rodando em `http://localhost:8082`
+
+2. **Frontend**
+```bash
+# Clone este repositório
+git clone https://github.com/ricvecchio/angular-java-frontend.git
+
+# Acesse a pasta do projeto
+cd angular-java-frontend
+
+# Instale as dependências
+npm install
+
+# Execute a aplicação
+ng serve
+
+# Acesse no navegador
+http://localhost:4200
+
+```
+
+3. **Acesse**
+👉 http://localhost:4200
+
+---
