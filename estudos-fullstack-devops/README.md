@@ -76,8 +76,8 @@ npm start
 
 ### Frontend
 - **Abrir Conta:** envia requisição para `http://localhost:8081/api/contas/abrir`
-- **Consultar Contas:** consome `http://localhost:8081/api/contas`
-- **Testar Serviços:** verifica status do Kafka em `http://localhost:8082`
+- **Listar Endpoints:** consome `http://localhost:8081/api/endpoints`
+- **Consultar Contas:** consome `http://localhost:8082/api/contas`
 
 ### Backend
 - **Gestão de Contas:** abertura, listagem e atualização de contas
