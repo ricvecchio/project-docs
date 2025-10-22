@@ -92,7 +92,12 @@ kafka-service/
 
 ---
 
-### 🧼 1. Limpeza Completa do Ambiente Docker
+### 1️⃣ Pré-requisitos
+- Docker e Docker Compose instalados.
+- Java 21 + Maven (caso queira rodar manualmente).
+- Porta 5432 (PostgreSQL) e 9092 (Kafka) livres.
+
+### 2️⃣ Limpeza Completa do Ambiente Docker
 Antes de subir o ambiente, **limpe todas as imagens, containers e redes antigas** para evitar conflitos:
 
 ```bash
@@ -108,7 +113,7 @@ Use apenas se deseja começar do zero.
 
 ---
 
-### 🔎 2. Verificação de Portas Livres
+### 3️⃣ Verificação de Portas Livres
 
 Certifique-se de que as seguintes portas **não estão em uso** no seu sistema:
 
@@ -136,7 +141,7 @@ sudo kill -9 <PID>
 ```
 ---
 
-### 🧭 3. Navegação local do projeto
+### 4️⃣ Navegação local do projeto
 
 Acesse a pasta de infraestrutura local no terminal:
 
@@ -145,7 +150,7 @@ cd ~/"Projetos/Projeto para Estudos (Frontend + Backend)/api-funcoes-teste-sprin
 ```
 ---
 
-### 🧰 4. Subindo o Ambiente Completo
+### 5️⃣ Subindo o Ambiente Completo
 
 Com o **Docker Desktop** aberto e em execução, execute:
 
@@ -160,7 +165,7 @@ Esse comando vai:
 4. Iniciar todos os containers em segundo plano
 ---
 
-### 🩺 5. Verificando o Status dos Containers
+### 6️⃣ Verificando o Status dos Containers
 
 Após alguns minutos (aguarde os health checks internos), execute:
 
@@ -180,7 +185,17 @@ mno112         postgres-db      Up (healthy)  0.0.0.0:5432->5432/tcp
 
 ---
 
-### 🧾 6. Logs e Debug
+### 7️⃣ Teste Completo (Smoke Test)
+Após subir o ambiente, rode os health checks:
+```bash
+curl -s http://localhost:8081/actuator/health
+curl -s http://localhost:8082/actuator/health
+```
+Ambos devem retornar `"status": "UP"`
+
+---
+
+### 💾 🐞 Logs e Debug
 
 Para visualizar logs de um serviço específico:
 
@@ -194,22 +209,11 @@ docker logs -f kafka-service
 
 ---
 
-### 🧪 7. Teste Completo (Smoke Test)
-Após subir o ambiente, rode os health checks:
-```bash
-curl -s http://localhost:8081/actuator/health
-curl -s http://localhost:8082/actuator/health
-```
-Ambos devem retornar `"status": "UP"`
+## 🌐 Endpoints para Teste no Insomnia
 
----
+### 🌿 Conta Service (`http://localhost:8081`)
 
-### 🧩 8. Endpoints para Teste no Insomnia
-📘 **Conta Service**
-
-**Base URL:**  ``` http://localhost:8081 ``` 
-
-🟢 **1. Criar Conta** - POST `/api/contas/abrir`
+1️⃣ **Criar Conta** - POST `/api/contas/abrir`
 - **Body:** (JSON)
 ```json
 {
@@ -227,7 +231,7 @@ Ambos devem retornar `"status": "UP"`
 }
 ```
 
-🟢 **2. Listar Endpoints** - GET `/api/endpoints`
+2️⃣ **Listar Endpoints** - GET `/api/endpoints`
 
 ✅ **Resposta:**
 ```json
@@ -259,7 +263,7 @@ Ambos devem retornar `"status": "UP"`
 ]
 ```
 
-🟢 **3. Actuator Health:** - GET `/actuator/health`
+3️⃣ **Actuator Health:** - GET `/actuator/health`
 
 ✅ **Resposta:**
 ```json
@@ -272,7 +276,7 @@ Ambos devem retornar `"status": "UP"`
 }
 ```
 
-🟢 **4. Health Check:** - GET `/health`
+4️⃣ **Health Check:** - GET `/health`
 
 ✅ **Resposta:**
 ```json
@@ -284,11 +288,9 @@ Ambos devem retornar `"status": "UP"`
 }
 ```
 
-📘 **Kafka Service**
+### 🌿 Kafka Service (`http://localhost:8082`)
 
-**Base URL:**  ``` http://localhost:8082```
-
-🟢 **1. Listar Contas** - GET `/api/contas`
+1️⃣ **Listar Contas** - GET `/api/contas`
 
 ✅ **Resposta:**
 ```json
@@ -315,7 +317,7 @@ Ambos devem retornar `"status": "UP"`
   }
 ]
 ```
-🟢 **2. Actuator Health** - GET `/actuator/health`
+2️⃣ **Actuator Health** - GET `/actuator/health`
 
 ✅ **Resposta:**
 ```json
@@ -328,7 +330,7 @@ Ambos devem retornar `"status": "UP"`
 }
 ```
 
-🟢 **3. Health Check:** - GET `/health`
+3️⃣ **Health Check:** - GET `/health`
 
 ✅ **Resposta:**
 ```json
@@ -341,7 +343,7 @@ Ambos devem retornar `"status": "UP"`
 ```
 ---
 
-### 🧠 9. Dicas de Troubleshooting
+## 🧠 Dicas de Troubleshooting
 - Caso um serviço fique em `unhealthy`, use:
 ```bash
 docker inspect <nome_container> | grep -A 10 "Health"
@@ -361,7 +363,7 @@ docker compose build --no-cache
 
 ---
 
-### 🧹 10. Encerrando o Ambiente
+## 🧹 Encerrando o Ambiente
 Para **parar e remover tudo** (containers, redes e volumes):
 ```bash
 docker compose down -v --remove-orphans
