@@ -13,6 +13,9 @@ docker ps
 # Remover todos os containers parados
 docker container prune -f
 
+# Verificar Imagens Docker
+docker images | grep service
+
 # Remover imagens não utilizadas
 docker image prune -a -f
 
@@ -56,6 +59,26 @@ docker compose up -d --build
 
 # Listar os containers em execução no Docker
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# Entrar no container do Kafka
+docker exec -it infra-kafka-1 bash
+
+# Listar tópicos
+kafka-topics.sh --list --bootstrap-server localhost:9092
+
+# Produzir mensagem de teste
+kafka-console-producer.sh --topic contas-topic --bootstrap-server localhost:9092
+
+# Consumir mensagens
+kafka-console-consumer.sh --topic contas-topic --from-beginning --bootstrap-server localhost:9092
+
+# Conectar ao banco PostgreSQL via Docker
+docker exec -it infra-postgres-1 psql -U postgres -d conta_db
+
+# Comandos SQL úteis
+\dt                    # Listar tabelas
+SELECT * FROM contas;  # Ver dados da tabela contas
+\q                     # Sair
 ```
 ---
 
@@ -211,9 +234,31 @@ git push origin main
 
 ---
 
-### 💻 TO-DO
+### 💻 Instalação e Configuração do Java (macOS / Homebrew)
 ```bash
+brew install openjdk
+brew install openjdk@21
+export JAVA_HOME=/opt/homebrew/opt/openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+java -version
+javac -version
+```
 
+---
+
+### 💻 Verificação e Build com Maven
+```bash
+mvn clean install
+mvn clean compile -DskipTests
+mvn clean package -DskipTests
+mvn spring-boot:run
+```
+
+---
+
+### 💻 Verificar Portas em Uso
+```bash
+lsof -iTCP -sTCP:LISTEN -P -n
 ```
 
 ---
@@ -229,5 +274,4 @@ git push origin main
 ```bash
 
 ```
-
 ---

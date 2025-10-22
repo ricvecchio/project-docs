@@ -15,6 +15,9 @@ Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orq
 
 A arquitetura de mensageria do projeto é baseada no **Apache Kafka**, responsável como um mecanismo de **mensageria assíncrona** entre dois microsserviços:
 👉 o **conta-service** (produtor) e o **kafka-service** (consumidor).
+
+O Kafka permite que diferentes partes da aplicação troquem mensagens de forma independente e desacoplada.
+No contexto deste projeto, o Kafka é executado em um container Docker, utilizando uma imagem pronta que roda em um ambiente isolado, simplificando a configuração e execução do serviço.
 ```text
 +-------------------+        +-------------------+        +-------------------+        +---------------------+
 |                   |        |                   |        |                   |        |                     |
