@@ -108,7 +108,6 @@ kafka-service/
 ---
 
 ## ✅ Benefícios da Arquitetura com Kafka
-
 - **Desacoplamento:** o `conta-service` não depende da disponibilidade do `kafka-service`.
 - **Escalabilidade:** múltiplos consumidores podem ler o mesmo tópico em paralelo.
 - **Tolerância a falhas:** mensagens permanecem armazenadas até o consumo bem-sucedido.
@@ -116,28 +115,13 @@ kafka-service/
 
 ---
 
-## 🧩 Visão Geral do Fluxo Kafka
-
-O usuário faz uma requisição HTTP (`POST /api/contas/abrir`) para abrir uma nova conta.
-
-O **conta-service** transforma essa requisição em uma **mensagem JSON** e publica no tópico Kafka (`conta.aberturas.topic`).
-
-O **kafka-service** escuta esse tópico através de um `@KafkaListener`, consome a mensagem e cria/atualiza o cliente e a conta no banco **PostgreSQL**.
-
-Todo esse processo ocorre de forma **assíncrona e desacoplada**, sem dependência direta entre os dois serviços.
-
----
-
 ## ⚙️ Funções e Responsabilidades do Kafka — Passo a Passo
 
----
-
-### **1. Produção da Mensagem (Producer)**
-
+### **1️⃣ Produção da Mensagem (Producer)**
 📍 **Local:** `conta-service → ContaService.java`
 
 **Função do Kafka aqui:**
-- Enviar mensagens para o tópico Kafka definido em `application.properties` (`conta.aberturas.topic`).
+- Enviar mensagens para o **tópico Kafka** definido em `application.properties` (`conta.aberturas.topic`).
 - Garantir entrega confiável e segura (usando `acks=all` e `retries=3`).
 
 **Onde acontece:**
@@ -145,7 +129,6 @@ Todo esse processo ocorre de forma **assíncrona e desacoplada**, sem dependênc
 kafkaTemplate.send(contaAberturasTopic, request.getCpf(), payload);
 ```
 **Descrição técnica:**
-
 - `KafkaTemplate` é o componente que **envia mensagens**.
 - O método `.send()` publica a mensagem no **tópico**.
 - A `key` (CPF) garante **particionamento consistente** — todas as mensagens do mesmo cliente vão para a mesma partição.
@@ -153,12 +136,11 @@ kafkaTemplate.send(contaAberturasTopic, request.getCpf(), payload);
 
 **Configuração usada:**  
 📍 **Arquivo:** `KafkaProducerConfig.java`
-
-Define propriedades do producer:
-- Servidor Kafka (`bootstrap-servers`)
-- Serializadores (`StringSerializer`)
-- Confirmação de envio (`ACKS_CONFIG = all`)
-- Tentativas de reenvio (`RETRIES_CONFIG = 3`)
+- Define propriedades do producer:
+  - Servidor Kafka (`bootstrap-servers`)
+  - Serializadores (`StringSerializer`)
+  - Confirmação de envio (`ACKS_CONFIG = all`)
+  - Tentativas de reenvio (`RETRIES_CONFIG = 3`)
 
 ---
 
@@ -272,8 +254,6 @@ O Kafka no seu projeto atua como um **barramento de eventos** entre microsservi�
 ---
 
 ## 🟢 Início: Passo a passo para subir localmente com Docker
-
----
 
 ### 1️⃣ Pré-requisitos
 - Docker e Docker Compose instalados.
@@ -398,8 +378,6 @@ docker logs -f kafka-service
 ## 🌐 Endpoints para Teste no Insomnia
 
 ### 🌿 Conta Service (`http://localhost:8081`)
-
----
 
 1️⃣ **Criar Conta** - POST `/api/contas/abrir`
 - **Body:** (JSON)
