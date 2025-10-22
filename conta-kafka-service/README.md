@@ -1,23 +1,22 @@
 # 🚀 Guia Oficial de Deploy Local com Docker
 
-Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orquestrados via Docker Compose, com os seguintes componentes:
+Este projeto implementa uma arquitetura de **microserviços Java Spring Boot**, orquestrados com **Docker Compose**, integrando mensageria **Apache Kafka** e banco de dados **PostgreSQL**:
 ![Diagrama](https://github.com/ricvecchio/project-docs/blob/main/images/spring-kafka-container.png)
 
-🐘 **PostgreSQL** — Banco de dados relacional  
-🧠 **Zookeeper** — Coordenação e registro de serviços para o Kafka  
-🔄 **Kafka Broker** — Sistema de mensageria distribuída   
-💳 **Conta Service** — Microserviço principal para operações de conta  
-📬 **Kafka Service** — Microserviço para consumo e publicação de mensagens Kafka
+| Serviço              | Função Principal                           |
+| -------------------- | ------------------------------------------ |
+| 🐘 **PostgreSQL**    | Banco de dados relacional                  |
+| 🧠 **Zookeeper**     | Coordenação e registro de serviços Kafka   |
+| 🔄 **Kafka Broker**  | Sistema de mensageria distribuída          |
+| 💳 **Conta Service** | Microserviço produtor de eventos Kafka     |
+| 📬 **Kafka Service** | Microserviço consumidor que persiste dados |
 
 ---
 
-### 🔄 Fluxo de Mensagens Kafka — Comunicação entre os Microserviços
+### 🔄 Arquitetura Kafka — Comunicação entre Microserviços
 
-A arquitetura de mensageria do projeto é baseada no **Apache Kafka**, responsável como um mecanismo de **mensageria assíncrona** entre dois microsserviços:
-👉 o **conta-service** (produtor) e o **kafka-service** (consumidor).
+O **Apache Kafka** atua como **barramento de eventos assíncrono** entre o `conta-service` (producer) e o `kafka-service` (consumer), permitindo o desacoplamento completo entre os dois.
 
-O Kafka permite que diferentes partes da aplicação troquem mensagens de forma independente e desacoplada.
-No contexto deste projeto, o Kafka é executado em um container Docker, utilizando uma imagem pronta que roda em um ambiente isolado, simplificando a configuração e execução do serviço.
 ```text
 +-------------------+        +-------------------+        +-------------------+        +---------------------+
 |                   |        |                   |        |                   |        |                     |
@@ -42,25 +41,24 @@ No contexto deste projeto, o Kafka é executado em um container Docker, utilizan
 
 ---
 
-### 🧩 Visão Geral do Fluxo Kafka
+### Fluxo de Mensagens
 
-1. O **usuário faz uma requisição HTTP** `(POST /api/contas/abrir)` para abrir uma nova conta.
-2. O **conta-service** transforma essa requisição em uma **mensagem JSON** e **publica no tópico Kafka** (`conta.aberturas.topic`).
-3. O **kafka-service** escuta esse tópico através de um **@KafkaListener, consome a mensagem**, e **cria/atualiza o cliente e a conta no banco PostgreSQL.**
-4. Todo esse processo ocorre **de forma assíncrona e desacoplada**, sem dependência direta entre os dois serviços.
+1. O **usuário realiza uma requisição HTTP** `(POST /api/contas/abrir)`.
+2. O **conta-service** envia um evento JSON para o tópico Kafka `conta.aberturas.topic`.
+3. O **kafka-service** consome o evento via `@KafkaListener` e salva os dados no PostgreSQL.
+4. Todo o fluxo é **assíncrono**, sem dependência direta entre os dois serviços.
 
 ---
 
-### 🔄 Componentes do Fluxo
-
-| **Componente**         | **Tipo**         | **Responsabilidade Principal**                                    |
-|-------------------------|------------------|-------------------------------------------------------------------|
-| `conta-service`         | Producer         | Envia mensagens Kafka com dados de abertura de conta |
-| `KafkaProducerConfig`   | Configuração     | Define propriedades do produtor Kafka                             |
-| `Kafka Broker`        | Middleware       | Armazena e distribui mensagens entre serviços                     |
-| `kafka-service`         | Consumer         | Lê mensagens e executa persistência no banco                      |
-| `KafkaConsumerConfig`   | Configuração     | Controla comportamento e políticas de leitura                     |
-| `PostgreSQL`          | Banco de dados   | Persistência final de Cliente e Conta                             |
+### 🧩 Detalhamento dos Componentes
+| Componente            | Tipo           | Função                               |
+| --------------------- | -------------- | ------------------------------------ |
+| `conta-service`       | Producer       | Publica eventos de abertura de conta |
+| `KafkaProducerConfig` | Configuração   | Define propriedades do producer      |
+| `Kafka Broker`        | Middleware     | Armazena e distribui mensagens       |
+| `kafka-service`       | Consumer       | Consome e processa mensagens         |
+| `KafkaConsumerConfig` | Configuração   | Define comportamento do consumidor   |
+| `PostgreSQL`          | Banco de dados | Persistência de clientes e contas    |
 
 ---
 
@@ -68,94 +66,60 @@ No contexto deste projeto, o Kafka é executado em um container Docker, utilizan
 - **Desacoplamento:** o `conta-service` não depende da disponibilidade do `kafka-service`.
 - **Escalabilidade:** múltiplos consumidores podem ler o mesmo tópico em paralelo.
 - **Tolerância a falhas:** mensagens permanecem armazenadas até o consumo bem-sucedido.
-- **Consistência eventual:** o estado do sistema se propaga via eventos Kafka.
+- **Consistência eventual:** dados propagados de forma assíncrona entre serviços.
 
 ---
 
-## ⚙️ Funções e Responsabilidades do Kafka — Passo a Passo
+## ⚙️ Funcionamento Técnico do Kafka
 
 ### **1️⃣ Produção da Mensagem (Producer)**
 📍 **Local:** `conta-service → ContaService.java`
-
-**Função do Kafka aqui:**
-- Enviar mensagens para o **tópico Kafka** definido em `application.properties` (`conta.aberturas.topic`).
-- Garantir entrega confiável e segura (usando `acks=all` e `retries=3`).
-
-**Onde acontece:**
 ```java
 kafkaTemplate.send(contaAberturasTopic, request.getCpf(), payload);
 ```
-**Descrição técnica:**
-- `KafkaTemplate` é o componente que **envia mensagens**.
-- O método `.send()` publica a mensagem no **tópico**.
-- A `key` (CPF) garante **particionamento consistente** — todas as mensagens do mesmo cliente vão para a mesma partição.
-- O `payload` é um **JSON** com os dados da requisição (`AbrirContaRequest`).
 
-**Configuração usada:**  
-📍 **Arquivo:** `KafkaProducerConfig.java`
-- Define propriedades do producer:
-  - Servidor Kafka (`bootstrap-servers`)
-  - Serializadores (`StringSerializer`)
-  - Confirmação de envio (`ACKS_CONFIG = all`)
-  - Tentativas de reenvio (`RETRIES_CONFIG = 3`)
+- Enviar mensagens para o **tópico Kafka** definido em `application.properties`.
+- `KafkaTemplate` publica o JSON com o CPF como **key**, garantindo particionamento consistente.
+
+- Configuração (`KafkaProducerConfig.java`):
+  - `acks=all` — confirmação total
+  - `retries=3` — tentativas de reenvio
+  - `bootstrap-servers`, `StringSerializer`, etc.
 
 ---
 
-### **2️⃣ Transporte da Mensagem (Broker)**
+### **2️⃣ Transporte da Mensagem**
 
-📍 **Local:*** Entre os dois serviços — mediado pelo ***Kafka Broker**
+📍 **Local:** Kafka Broker
 
-**Funções:**
-- Atuar como **middleware de mensageria**, armazenando e entregando as mensagens de forma confiável. 
-- Garantir **durabilidade e ordenação** por partição. 
-- Permitir que o consumidor processe as mensagens mesmo que o produtor ou o consumidor estejam temporariamente offline.
+Responsável por armazenar, ordenar e entregar as mensagens de forma confiável.
+- Persiste mensagens em disco.
+- Mantém offsets de leitura.
+- Retém mensagens até o consumo com sucesso. 
 
-**Detalhes técnicos:**
-- O Kafka **persiste a mensagem em disco** no cluster.
-- Mantém o **offset de leitura** para cada grupo de consumidores.
-- Caso o `kafka-service` esteja fora do ar, as mensagens **ficam retidas** até serem consumidas.
+**Tópico:** `conta.aberturas.topic`
 
-**Componente principal:**
-- **Tópico:** `conta.aberturas.topic`
-- **Mensagem:** JSON com dados da requisição de abertura de conta
+**Mensagem:** JSON com dados da abertura de conta
 
 ---
 
 ### **3️⃣ Consumo da Mensagem (Consumer)**
 
 📍 **Local:** `kafka-service → ContaConsumer.java`
-
-**Fluxo:**
-- **Entregar mensagens** publicadas no tópico (conta.aberturas.topic) para o serviço consumidor.
-- Controlar o **offset** (posição de leitura).
-- Permitir **reprocessamento** em caso de erro, pois o commit automático está desativado.
-
-**Onde acontece:**
 ```java
 @KafkaListener(topics = "${conta.aberturas.topic}", groupId = "kafka-service")
 public void consume(String message) { ... }
 ```
 
-**Descrição técnica:**
-- O `@KafkaListener` faz o subscribe ao tópico e **aciona automaticamente** o método `consume()` ao receber novas mensagens.
-- O `groupId` (`kafka-service`) garante que esse consumidor **faça parte de um grupo lógico,** evitando leitura duplicada por outros serviços iguais.
-- A mensagem JSON é **desserializada** via `ObjectMapper` e usada para:
-  - Criar ou atualizar o `Cliente` no banco.
-  - Criar uma nova `Conta` associada ao cliente.
+- O `@KafkaListener` aciona o método automaticamente ao receber nova mensagem.
+- O `groupId` evita duplicidade de leitura entre consumidores do mesmo grupo.
+- A mensagem é desserializada e utilizada para salvar cliente e conta no banco.
 
 ---
 
 ### **4️⃣ Persistência no Banco de Dados**
 
 📍 **Local:** `kafka-service → ContaConsumer.java`
-
-**Função do Kafka aqui:**
-- Embora o Kafka não grave diretamente no banco, ele **dispara o evento** que inicia a persistência. 
-- O consumidor é responsável por:
-  - Interpretar a mensagem Kafka.
-  - Executar operações no banco PostgreSQL via `ClienteRepository` e `ContaRepository`.
-
-**Fluxo dentro do consumidor:**
 ```java
 Cliente cliente = clienteRepository.findByCpf(cpfLimpo)
         .orElseGet(() -> clienteRepository.save(new Cliente(request.getNomeCliente(), cpfLimpo)));
@@ -167,42 +131,38 @@ conta.setCliente(cliente);
 contaRepository.save(conta);
 ```
 
+- O consumidor executa a persistência no PostgreSQL via `ClienteRepository` e `ContaRepository`.
+
 ---
 
-### **5️⃣ Persistência no Banco de Dados**
+### **5️⃣ Configuração do Consumer**
 
 📍 **Local:** `KafkaConsumerConfig.java`
 
-**Função:**
-- Definir como o consumidor Kafka se conecta, processa e gerencia mensagens.
-
-**Principais parâmetros:** 
-
-| Configuração                 | Função                                                         |
-| ---------------------------- | -------------------------------------------------------------- |
-| `bootstrap-servers`          | Endereço do cluster Kafka                                      |
-| `group.id`                   | Identifica o grupo de consumidores                             |
-| `enable.auto.commit=false`   | Desativa commit automático (maior controle de reprocessamento) |
-| `auto.offset.reset=earliest` | Começa a consumir desde o início caso não haja offset salvo    |
-| `poll.timeout=1500`          | Tempo máximo de espera para novas mensagens                    |
+| Propriedade                  | Função                                 |
+| ---------------------------- | -------------------------------------- |
+| `bootstrap-servers`          | Endereço do cluster Kafka              |
+| `group.id`                   | Identificação do grupo de consumidores |
+| `enable.auto.commit=false`   | Controle manual do offset              |
+| `auto.offset.reset=earliest` | Consumo desde o início                 |
+| `poll.timeout=1500`          | Tempo de espera por mensagens          |
 
 ---
 
-## 🧠 Funções do Kafka no Projeto
-
-| **Etapa** | **Serviço**       | **Função Kafka**                          | **Localização**                                  |
-|------------|-------------------|--------------------------------------------|--------------------------------------------------|
-| 1️⃣ Produção de mensagem | `conta-service`   | Publicar evento de abertura de conta        | `ContaService.abrirConta()`                     |
-| 2️⃣ Transporte assíncrono | `Kafka Broker`  | Armazenar e rotear mensagens                | Servidor Kafka                                  |
-| 3️⃣ Consumo de mensagem   | `kafka-service`   | Escutar e processar eventos                 | `ContaConsumer.consume()`                       |
-| 4️⃣ Persistência          | `kafka-service`   | Converter evento em ação no BD              | `ClienteRepository` e `ContaRepository`         |
-| 5️⃣ Configuração técnica  | **Ambos**         | Controlar comportamento de producer e consumer | `KafkaProducerConfig`, `KafkaConsumerConfig` |
+### 🧠 Funções do Kafka no Projeto
+| Etapa            | Serviço         | Função Kafka                | Localização                                  |
+| ---------------- | --------------- | --------------------------- | -------------------------------------------- |
+| 1️⃣ Produção     | `conta-service` | Publica evento              | `ContaService.abrirConta()`                  |
+| 2️⃣ Transporte   | `Kafka Broker`  | Armazena e roteia mensagens | Servidor Kafka                               |
+| 3️⃣ Consumo      | `kafka-service` | Processa evento             | `ContaConsumer.consume()`                    |
+| 4️⃣ Persistência | `kafka-service` | Grava no banco              | `ClienteRepository`, `ContaRepository`       |
+| 5️⃣ Configuração | Ambos           | Define comportamento        | `KafkaProducerConfig`, `KafkaConsumerConfig` |
 
 ---
 
-## 🔍 Conclusão
+### 🔍 Conclusão
 
-O Kafka no seu projeto atua como um **barramento de eventos** entre microsserviços, permitindo:
+O Kafka no seu projeto atua como um **barramento de eventos** entre **microsserviços**, permitindo:
 - **Desacoplamento total** entre `conta-service` e `kafka-service`.
 - **Escalabilidade horizontal** (vários consumidores por grupo).
 - **Tolerância a falhas** (mensagens persistidas até consumo).
@@ -210,18 +170,17 @@ O Kafka no seu projeto atua como um **barramento de eventos** entre microsservi�
 
 ---
 
-## 🟢 Subir aplicação localmente com Docker - Passo a Passo
+## 🟢 Deploy Local com Docker
 
 ### 1️⃣ Pré-requisitos
 - Docker e Docker Compose instalados.
-- Java 21 + Maven (caso queira rodar manualmente).
-- Porta 5432 (PostgreSQL) e 9092 (Kafka) livres.
+- Java 21 + Maven (para execução manual)
+- Portas livres: `5432`, `2181`, `9092`, `8081`, `8082`
 
 ---
 
 ### 2️⃣ Limpeza Completa do Ambiente Docker
-Antes de subir o ambiente, **limpe todas as imagens, containers e redes antigas** para evitar conflitos:
-
+⚠️ Remove **todas as imagens, containers e redes:**
 ```bash
 docker stop $(docker ps -aq) && \
 docker rm -f $(docker ps -aq) && \
@@ -230,14 +189,10 @@ docker volume rm -f $(docker volume ls -q) && \
 docker network rm $(docker network ls -q | grep -v "bridge\|host\|none") && \
 docker builder prune -af
 ```
-⚠️ **Atenção:** Esse comando remove **tudo** do Docker (containers, volumes, imagens e redes personalizadas).
-Use apenas se deseja começar do zero.
 
 ---
 
 ### 3️⃣ Verificação de Portas Livres
-
-Certifique-se de que as seguintes portas **não estão em uso** no seu sistema:
 
 | Serviço | Porta | Descrição |
 |---------|-------|-----------|
@@ -257,30 +212,22 @@ sudo lsof -i :8081
 sudo lsof -i :8082
 ```
 
-Para liberar uma porta ocupada:
+Para liberar:
 ```bash
 sudo kill -9 <PID>
 ```
 ---
 
-### 4️⃣ Navegação local do projeto
-
-Acesse a pasta de infraestrutura local no terminal:
-
+### 4️⃣ Execução do Ambiente
+Navegue até a pasta de infraestrutura:
 ```bash
 cd ~/"Projetos/Projeto para Estudos (Frontend + Backend)/api-funcoes-teste-spring/infra"
 ```
----
-
-### 5️⃣ Subindo o Ambiente Completo
-
-Com o **Docker Desktop** aberto e em execução, execute:
-
+Suba o ambiente completo:
 ```bash
 docker compose --env-file .env up -d --build
 ```
-
-Esse comando vai:
+O comando:
 1. Criar a **rede** `microservices-net`
 2. Subir o **PostgreSQL**, **Zookeeper** e **Kafka Broker**
 3. Construir as imagens do `conta-service` e `kafka-service`
@@ -288,15 +235,12 @@ Esse comando vai:
 
 ---
 
-### 6️⃣ Verificando o Status dos Containers
-
-Após alguns minutos (aguarde os health checks internos), execute:
-
+### 5️⃣ Verificando o Status dos Containers
 ```bash
 docker ps
 ```
 
-Saída esperada (exemplo):
+Saída esperada:
 ```nginx
 CONTAINER ID   NAME             STATUS                    PORTS
 abc123         conta-service    Up (healthy)  0.0.0.0:8081->8080/tcp
@@ -308,36 +252,27 @@ mno112         postgres-db      Up (healthy)  0.0.0.0:5432->5432/tcp
 
 ---
 
-### 7️⃣ Teste Completo (Smoke Test)
-Após subir o ambiente, rode os health checks:
+### 6️⃣ Teste Rápido (Smoke Test)
 ```bash
 curl -s http://localhost:8081/actuator/health
 curl -s http://localhost:8082/actuator/health
 ```
-Ambos devem retornar `"status": "UP"`
+✅ Ambos devem retornar `"status": "UP"`
 
 ---
 
-### 💾 🐞 Logs e Debug
-
-Para visualizar logs de um serviço específico:
-
+### 7️⃣ Logs e Debug
 ```bash
 docker logs -f conta-service
-```
-ou 
-```bash
 docker logs -f kafka-service
 ```
 
 ---
 
-## 🌐 Endpoints para Teste no Insomnia
+## 🌐 Endpoints para Teste
 
 ### 🌿 Conta Service (`http://localhost:8081`)
-
-1️⃣ **Criar Conta** - POST `/api/contas/abrir`
-- **Body:** (JSON)
+**POST** `/api/contas/abrir`
 ```json
 {
   "nomeCliente": "Ricardo Teste",
@@ -345,7 +280,7 @@ docker logs -f kafka-service
   "tipoConta": "CORRENTE"
 }
 ```
-✅ **Resposta:**
+**Resposta:**
 ```json
 {
   "mensagem": "✅ Solicitação de abertura de conta processada!",
@@ -356,70 +291,14 @@ docker logs -f kafka-service
 
 ---
 
-2️⃣ **Listar Endpoints** - GET `/api/endpoints`
+**GET** `/api/endpoints`, `/actuator/health`, `/health`
 
-✅ **Resposta:**
-```json
-[
-  {
-    "path": "/",
-    "methods": "GET",
-    "controller": "HealthController",
-    "methodName": "home"
-  },
-  {
-    "path": "/api/contas/abrir",
-    "methods": "POST",
-    "controller": "ContaController",
-    "methodName": "abrirConta"
-  },
-  {
-    "path": "/api/endpoints",
-    "methods": "GET",
-    "controller": "EndpointController",
-    "methodName": "listarEndpoints"
-  },
-  {
-    "path": "/health",
-    "methods": "GET",
-    "controller": "HealthController",
-    "methodName": "health"
-  }
-]
-```
-
----
-
-3️⃣ **Actuator Health:** - GET `/actuator/health`
-
-✅ **Resposta:**
-```json
-{
-  "status": "UP",
-  "groups": [
-    "liveness",
-    "readiness"
-  ]
-}
-```
----
-
-4️⃣ **Health Check:** - GET `/health`
-
-✅ **Resposta:**
-```json
-{
-  "service": "conta-service",
-  "version": "1.0.0",
-  "status": "UP",
-  "timestamp": "2025-10-20T14:12:46.533994678"
-}
-```
 ---
 
 ### 🌿 Kafka Service (`http://localhost:8082`)
 
-1️⃣ **Listar Contas** - GET `/api/contas`
+**GET** `/api/contas`
+Lista todas as contas persistidas.
 
 ✅ **Resposta:**
 ```json
@@ -449,40 +328,12 @@ docker logs -f kafka-service
 
 ---
 
-2️⃣ **Actuator Health** - GET `/actuator/health`
-
-✅ **Resposta:**
-```json
-{
-  "status": "UP",
-  "groups": [
-    "liveness",
-    "readiness"
-  ]
-}
-```
-
----
-
-3️⃣ **Health Check:** - GET `/health`
-
-✅ **Resposta:**
-```json
-{
-  "service": "kafka-service",
-  "version": "1.0.0",
-  "status": "UP",
-  "timestamp": "2025-10-20T14:12:50.149249971"
-}
-```
----
-
 ## 🧠 Dicas de Troubleshooting
 - Caso um serviço fique em `unhealthy`, use:
 ```bash
 docker inspect <nome_container> | grep -A 10 "Health"
 ```
-- Verifique logs:
+- Logs:
 ```bash
 docker logs <nome_container>
 ```
@@ -498,12 +349,9 @@ docker compose build --no-cache
 ---
 
 ## 🧹 Encerrando o Ambiente
-Para **parar e remover tudo** (containers, redes e volumes):
+Para **parar e remover tudo** (containers, redes, volumes, cache e imagens):
 ```bash
 docker compose down -v --remove-orphans
-```
-Se quiser limpar completamente o cache e imagens:
-```bash
 docker system prune -af
 ```
 
