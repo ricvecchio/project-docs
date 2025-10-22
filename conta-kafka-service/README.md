@@ -3,11 +3,11 @@
 Este projeto utiliza um ambiente completo de microserviços Java Spring Boot orquestrados via Docker Compose, com os seguintes componentes:
 ![Diagrama](https://github.com/ricvecchio/project-docs/blob/main/images/spring-kafka-container.png)
 
-🐘 PostgreSQL — Banco de dados relacional  
-🧠 Zookeeper — Coordenação e registro de serviços para o Kafka  
-🔄 Kafka Broker — Sistema de mensageria distribuída   
-💳 Conta Service — Microserviço principal para operações de conta  
-📬 Kafka Service — Microserviço para consumo e publicação de mensagens Kafka
+🐘 **PostgreSQL** — Banco de dados relacional  
+🧠 **Zookeeper** — Coordenação e registro de serviços para o Kafka  
+🔄 **Kafka Broker** — Sistema de mensageria distribuída   
+💳 **Conta Service** — Microserviço principal para operações de conta  
+📬 **Kafka Service** — Microserviço para consumo e publicação de mensagens Kafka
 
 ---
 
@@ -253,7 +253,7 @@ O Kafka no seu projeto atua como um **barramento de eventos** entre microsservi�
 
 ---
 
-## 🟢 Início: Passo a passo para subir localmente com Docker
+## 🟢 Subir aplicação localmente com Docker - Passo a Passo
 
 ### 1️⃣ Pré-requisitos
 - Docker e Docker Compose instalados.
