@@ -345,6 +345,18 @@ docker restart conta-service
 ```bash
 docker compose build --no-cache
 ```
+- Ver apenas os últimos 50 registros (estáticos):
+```bash
+docker logs --tail 50 log-service
+```
+- Ver os últimos 50 registros e continuar acompanhando novos logs:
+```bash
+docker logs -f --tail 50 log-service
+```
+- Filtrar por uma palavra (exemplo: ERROR):
+```bash
+docker logs --tail 200 log-service | grep ERROR
+```
 
 ---
 
