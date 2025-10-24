@@ -225,7 +225,7 @@ cd ~/"Projetos/Projeto para Estudos (Frontend + Backend)/api-funcoes-teste-sprin
 ```
 Suba o ambiente completo:
 ```bash
-docker compose --env-file .env up -d --build
+docker compose --env-file .env.local up -d --build
 ```
 O comando:
 1. Criar a **rede** `microservices-net`
