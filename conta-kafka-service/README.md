@@ -364,10 +364,6 @@ Lista todas as contas persistidas.
 ```bash
 docker inspect <nome_container> | grep -A 10 "Health"
 ```
-- Logs:
-```bash
-docker logs <nome_container>
-```
 - Reinicie um container individual:
 ```bash
 docker restart conta-service
@@ -376,15 +372,22 @@ docker restart conta-service
 ```bash
 docker compose build --no-cache
 ```
-- Ver apenas os últimos 50 registros (estáticos):
+- Limpar cache e rebuildar tudo do zero:
+```bash
+mvn clean
+docker compose down -v
+docker compose build --no-cache
+docker compose --env-file .env.local up
+```
+- Logs: Ver apenas os últimos 50 registros (estáticos):
 ```bash
 docker logs --tail 50 log-service
 ```
-- Ver os últimos 50 registros e continuar acompanhando novos logs:
+- Logs: Ver os últimos 50 registros e continuar acompanhando novos logs:
 ```bash
 docker logs -f --tail 50 log-service
 ```
-- Filtrar por uma palavra (exemplo: ERROR):
+- Logs: Filtrar por uma palavra (exemplo: ERROR):
 ```bash
 docker logs --tail 200 log-service | grep ERROR
 ```
