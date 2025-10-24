@@ -252,12 +252,43 @@ mno112         postgres-db      Up (healthy)  0.0.0.0:5432->5432/tcp
 
 ---
 
-### 6️⃣ Teste Rápido (Smoke Test)
+### 6️⃣ Comando único para testar todos os endpoints
 ```bash
-curl -s http://localhost:8081/actuator/health
-curl -s http://localhost:8082/actuator/health
+for url in \
+  "http://localhost:8081/api/contas/abrir" \
+  "http://localhost:8081/api/endpoints" \
+  "http://localhost:8081/api/contas" \
+  "http://localhost:8082/api/kafka/mensagens" \
+  "http://localhost:8082/api/kafka/status" \
+  "http://localhost:8082/actuator/health" \
+  "http://localhost:8083/api/logs/info" \
+  "http://localhost:8083/api/logs/error" \
+  "http://localhost:8083/actuator/health"; \
+do
+  echo "------------------------------------------------------"
+  echo "🔍 Testando: $url"
+  if [[ "$url" == *"/api/contas/abrir" ]]; then
+    curl -s -o /dev/null -w "⏱️  %{time_total}s | HTTP %{http_code}\n" -X POST "$url" \
+      -H "Content-Type: application/json" \
+      -d '{"nomeCliente":"Ricardo Teste Terminal","cpf":"321.050.100-51","tipoConta":"CORRENTE"}'
+  elif [[ "$url" == *"/api/kafka/mensagens" ]]; then
+    curl -s -o /dev/null -w "⏱️  %{time_total}s | HTTP %{http_code}\n" -X POST "$url" \
+      -H "Content-Type: application/json" \
+      -d '{"nomeCliente":"Ricardo Teste Kafka","cpf":"123.456.789-00","tipoConta":"CORRENTE"}'
+  elif [[ "$url" == *"/api/logs/info" ]]; then
+    curl -s -o /dev/null -w "⏱️  %{time_total}s | HTTP %{http_code}\n" -X POST "$url" \
+      -H "Content-Type: application/json" \
+      -d '{"acao":"CRIAR_CONTA","mensagem":"Conta criada com sucesso!"}'
+  elif [[ "$url" == *"/api/logs/error" ]]; then
+    curl -s -o /dev/null -w "⏱️  %{time_total}s | HTTP %{http_code}\n" -X POST "$url" \
+      -H "Content-Type: application/json" \
+      -d '{"acao":"CRIAR_CONTA","mensagem":"Erro ao criar conta"}'
+  else
+    curl -s -o /dev/null -w "⏱️  %{time_total}s | HTTP %{http_code}\n" -X GET "$url"
+  fi
+done
 ```
-✅ Ambos devem retornar `"status": "UP"`
+✅ Exibe apenas o **status HTTP** e **tempo total** da requisição
 
 ---
 
