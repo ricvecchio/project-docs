@@ -1,7 +1,7 @@
 # 🚀 Guia Oficial de Deploy Local com Docker
 
 Este projeto implementa uma arquitetura de **microserviços Java Spring Boot**, orquestrados com **Docker Compose**, integrando mensageria **Apache Kafka** e banco de dados **PostgreSQL**:
-![Diagrama](https://github.com/ricvecchio/project-docs/blob/main/images/spring-kafka-container.png)
+![Diagrama](images/spring-kafka-container.png)
 
 | Serviço              | Função Principal                           |
 | -------------------- | ------------------------------------------ |
@@ -302,7 +302,6 @@ docker logs -f kafka-service
 
 ## 🐳 Stack em Execução
 ![Ambiente Docker rodando](images/docker-run.png)
-
 ---
 
 ## 🌐 Endpoints para Teste
