@@ -300,6 +300,11 @@ docker logs -f kafka-service
 
 ---
 
+## 🐳 Stack em Execução
+[Diagrama](https://github.com/ricvecchio/project-docs/blob/main/images/Docker-run.png)
+
+---
+
 ## 🌐 Endpoints para Teste
 
 ### 🌿 Conta Service (`http://localhost:8081`)
