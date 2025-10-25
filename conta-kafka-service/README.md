@@ -301,7 +301,7 @@ docker logs -f kafka-service
 ---
 
 ## 🐳 Stack em Execução
-[Diagrama](https://github.com/ricvecchio/project-docs/blob/main/images/Docker-run.png)
+![Ambiente Docker rodando](images/docker-run.png)
 
 ---
 
